@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: sans-serif;
   background-color: #0f0f0f;
 }
 
@@ -11,7 +11,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: linear-gradient(to ri, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(to right, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   color: #e0e0e0;
 }
 
@@ -20,12 +20,13 @@ body {
   margin-bottom: 2rem;
   text-align: center;
   color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  font-weight: bold;
 }
 
 .form {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
   max-width: 500px;
   background: rgba(255, 255, 255, 0.05);
@@ -36,8 +37,10 @@ body {
 }
 
 .input, .select, .textarea {
-  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 300px;
   padding: 0.75rem;
+  margin: 0.5rem 0;
   border: none;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.1);
@@ -64,7 +67,7 @@ body {
 }
 
 .button {
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 5px;
   background: linear-gradient(90deg, #00f260 0%, #0575e6 100%);
@@ -83,12 +86,13 @@ body {
 .result-container {
   margin-top: 2rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 1000px;
   background: rgba(255, 255, 255, 0.05);
   padding: 2rem;
   border-radius: 10px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: sans-serif;
 }
 
 .result-title {
@@ -102,26 +106,30 @@ body {
   background: rgba(0, 0, 0, 0.2);
   padding: 1rem;
   border-radius: 5px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: sans-serif;
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .container {
     padding: 1rem;
-  }
-
-  .form, .result-container {
-    padding: 1.5rem;
   }
 
   .title {
     font-size: 2rem;
   }
 
+  .form {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .input, .select, .textarea, .button {
     font-size: 0.9rem;
   }
-}
 
+  .form div {
+    width: 100%;
+  }
+}

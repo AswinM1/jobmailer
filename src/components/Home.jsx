@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Home.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +13,20 @@ const Home = () => {
     customMessage: '',
     ResumeLink: '',
   });
-
   const [generatedEmail, setGeneratedEmail] = useState('');
+  const [count, setCount] = useState(() => {
+    const savedCount = localStorage.getItem('emailCount');
+    return savedCount ? parseInt(savedCount, 10) : 0;
+  });
+  const nav = useNavigate();
+
+  // Check if the user is logged in by looking at localStorage
+  const isLoggedIn = localStorage.getItem('loginvalue') === 'true';
+
+  // Sync count to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('emailCount', count);
+  }, [count]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,32 +35,41 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // If not logged in, prevent further email generation and navigate to login
+   
+
     try {
-      const response = await axios.post("http://localhost:3000/main", {
+      const response = await axios.post('http://localhost:3000/main', {
         input: formData,
       });
 
-      // Extract the reply text if it's an object (in case it's not a direct string)
       const emailText = response.data.reply?.choices?.[0]?.message?.content || 'No email generated';
-      
       setGeneratedEmail(emailText); // Set the email text to display
     } catch (error) {
       console.error('Error generating email:', error);
     }
+
+    // Increment count and check if it's greater than 1 before navigating
+    const newCount = count + 1;
+    setCount(newCount);
+
+    if ( !isLoggedIn && newCount > 2) {
+      nav('/login');
+      return;
+    }
   };
 
-  // Function to send the email using the 'mailto' protocol
   const sendEmail = () => {
     const subject = encodeURIComponent('Subject of the Email');
     const body = encodeURIComponent(generatedEmail);
-    const recipient = encodeURIComponent(formData.recipientName + '@' + formData.recipientCompany); // This will depend on the recipient email address.
+    const recipient = encodeURIComponent(formData.recipientName + '@' + formData.recipientCompany);
 
     window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
   };
 
   return (
     <div className="container">
-      <h1 className="title">AI Email Generator</h1>
+      <h1 className="title">Hello,Start Generating Emails which are HR friendly</h1>
       <form className="form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -89,12 +111,7 @@ const Home = () => {
           required
           className="input"
         />
-        <select 
-          name="emailPurpose" 
-          onChange={handleChange} 
-          required
-          className="select"
-        >
+        <select name="emailPurpose" onChange={handleChange} required className="select">
           <option value="">Select Purpose</option>
           <option value="job_inquiry">Job Inquiry</option>
           <option value="follow_up">Follow-Up</option>
@@ -106,13 +123,18 @@ const Home = () => {
           onChange={handleChange}
           className="textarea"
         />
-        <button type="submit" className="button">Generate Email</button>
+        <button type="submit" className="button">
+          Generate Email
+        </button>
       </form>
+
       {generatedEmail && (
         <div className="result-container">
           <h3 className="result-title">Generated Email:</h3>
           <pre className="result-content">{generatedEmail}</pre>
-          <button onClick={sendEmail} className="button">Send Email</button>
+          <button onClick={sendEmail} className="button">
+            Send Email
+          </button>
         </div>
       )}
     </div>
